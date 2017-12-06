@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Photo App</string>
+
+    <string name="camera">Camera</string>
+    <string name="text_camera">No Info</string>
+    <string name="edit">Effect</string>
+    <string name="text_edit">No Info</string>
+    <string name="share">Share</string>
+    <string name="text_share">No Info</string>
+    <string name="info">Info</string>
+    <string name="text_info">No Info</string>
+    <string name="setting">Setting</string>
+    <string name="text_setting">No Info</string>
+
+    
+    <string name="request_permission">Request Permission</string>
+</resources>
