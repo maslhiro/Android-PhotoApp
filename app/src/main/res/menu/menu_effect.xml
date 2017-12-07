@@ -1,4 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:icon="@drawable/ic_add_to_photos"
+        android:title="@string/addPic"  />
+    <item
+        android:icon="@drawable/ic_crop"
+        android:title="@string/cropPic" />
+    <item
+        android:title="@string/rotalePic"
+        android:icon="@drawable/ic_rotate" />
+    <item
+        android:title="@string/zoomIn"
+        android:icon="@drawable/ic_zoom_in"
+        />
+    <item
+        android:title="@string/zoomOut"
+        android:icon="@drawable/ic_zoom_out"
+        />
+
 
 </menu>

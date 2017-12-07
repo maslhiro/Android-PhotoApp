@@ -5,13 +5,18 @@
     <string name="text_camera">No Info</string>
     <string name="edit">Effect</string>
     <string name="text_edit">No Info</string>
-    <string name="share">Share</string>
-    <string name="text_share">No Info</string>
     <string name="info">Info</string>
     <string name="text_info">No Info</string>
     <string name="setting">Setting</string>
     <string name="text_setting">No Info</string>
 
-    
+
+
     <string name="request_permission">Request Permission</string>
+    <string name="addPic">Add</string>
+    <string name="cropPic">Crop</string>
+    <string name="rotalePic">Rotale</string>
+    <string name="zoomIn">Zoom In</string>
+    <string name="zoomOut">Zoom Out</string>
+
 </resources>

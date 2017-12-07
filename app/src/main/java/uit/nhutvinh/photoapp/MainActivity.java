@@ -62,17 +62,16 @@ public class MainActivity extends AbsRuntimePermission {
         btnEffect = (ImageButton) findViewById(R.id.btnEffect);
         btnSetting = (ImageButton) findViewById(R.id.btnSetting);
         btnInfo = (ImageButton) findViewById(R.id.btnInfo);
-        btnShare = (ImageButton) findViewById(R.id.btnShare);
+
 
         txtCamera = (TextView) findViewById(R.id.txtCamera);
         txtEffect = (TextView) findViewById(R.id.txtEffect);
         txtInfo = (TextView) findViewById(R.id.txtInfo);
         txtSetting = (TextView) findViewById(R.id.txtSetting);
-        txtShare = (TextView) findViewById(R.id.txtShare);
+
 
         font = Typeface.createFromAsset(this.getAssets(),"fonts/amita-regular.ttf");
         txtCamera.setTypeface(font);
-        txtShare.setTypeface(font);
         txtSetting.setTypeface(font);
         txtInfo.setTypeface(font);
         txtEffect.setTypeface(font);
