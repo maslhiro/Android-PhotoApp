@@ -18,5 +18,6 @@
     <string name="rotalePic">Rotale</string>
     <string name="zoomIn">Zoom In</string>
     <string name="zoomOut">Zoom Out</string>
+    <string name="drawPic">Draw</string>
 
 </resources>

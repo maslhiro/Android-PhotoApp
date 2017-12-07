@@ -6,9 +6,7 @@
     <item
         android:icon="@drawable/ic_crop"
         android:title="@string/cropPic" />
-    <item
-        android:title="@string/rotalePic"
-        android:icon="@drawable/ic_rotate" />
+
     <item
         android:title="@string/zoomIn"
         android:icon="@drawable/ic_zoom_in"
@@ -17,6 +15,12 @@
         android:title="@string/zoomOut"
         android:icon="@drawable/ic_zoom_out"
         />
+    <item
+        android:title="@string/rotalePic"
+        android:icon="@drawable/ic_rotate" />
+    <item
+        android:title="@string/drawPic"
+        android:icon="@drawable/ic_edit_white_24dp"/>
 
 
 </menu>
