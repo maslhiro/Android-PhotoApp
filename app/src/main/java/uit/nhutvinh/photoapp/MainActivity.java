@@ -1,14 +1,18 @@
 package uit.nhutvinh.photoapp;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,9 +27,10 @@ import uit.nhutvinh.model.AbsRuntimePermission;
 public class MainActivity extends AbsRuntimePermission {
 
     private static final int REQUEST_PERMISSION = 10;
-    ImageButton btnCamera,btnEffect,btnInfo,btnSetting,btnShare;
-    TextView txtCamera,txtEffect,txtInfo,txtSetting,txtShare;
+    ImageButton btnCamera,btnEffect,btnInfo,btnSetting;
+    TextView txtCamera,txtEffect,txtInfo,txtSetting;
     Typeface font;
+    Dialog popupInfo;
     private Uri imageUri;
 
     @Override
@@ -40,6 +45,12 @@ public class MainActivity extends AbsRuntimePermission {
     }
 
     private void addEvents() {
+        btnInfo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showPopup(v);
+            }
+        });
 
         btnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,6 +69,8 @@ public class MainActivity extends AbsRuntimePermission {
     }
 
     private void addControls() {
+        popupInfo = new Dialog(MainActivity.this);
+
         btnCamera = (ImageButton) findViewById(R.id.btnCamera);
         btnEffect = (ImageButton) findViewById(R.id.btnEffect);
         btnSetting = (ImageButton) findViewById(R.id.btnSetting);
@@ -131,6 +144,20 @@ public class MainActivity extends AbsRuntimePermission {
         Intent intent=new Intent(MainActivity.this, EffectActivity.class);
         startActivity(intent);
     }
+    public void showPopup(View v) {
+        TextView txtClosePop;
 
+        popupInfo.setContentView(R.layout.popup);
+        txtClosePop =(TextView) popupInfo.findViewById(R.id.txtClosePopup);
+
+        txtClosePop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                popupInfo.dismiss();
+            }
+        });
+        popupInfo.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupInfo.show();
+    }
 
 }

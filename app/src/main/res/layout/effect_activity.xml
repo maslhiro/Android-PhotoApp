@@ -8,7 +8,9 @@
         android:id="@+id/imgPic"
         android:layout_width="match_parent"
         android:layout_height="400dp"
-        android:layout_margin="30dp"/>
+        android:layout_margin="40dp"
+        android:background="@drawable/image_border"/>
+
     <android.support.design.widget.BottomNavigationView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

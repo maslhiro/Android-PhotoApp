@@ -15,9 +15,12 @@
     <string name="request_permission">Request Permission</string>
     <string name="addPic">Add</string>
     <string name="cropPic">Crop</string>
-    <string name="rotalePic">Rotale</string>
+    <string name="rotatePic">Rotate</string>
+    <string name="zoom">Zoom</string>
     <string name="zoomIn">Zoom In</string>
     <string name="zoomOut">Zoom Out</string>
     <string name="drawPic">Draw</string>
+    <string name="version_app">Version 1.0</string>
+    <string name="info_student_01">Developed by Le Nhut Vinh - 15521016</string>
 
 </resources>
