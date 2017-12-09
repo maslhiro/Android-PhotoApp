@@ -74,7 +74,7 @@
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:background="@drawable/cerclebackgroundpurple"
-                            android:src="@drawable/ic_camera_alt_black_24dp"
+                            android:src="@drawable/ic_camera"
                             android:padding="10dp"/>
                         <TextView
                             android:id="@+id/txtCamera"
@@ -116,7 +116,7 @@
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:background="@drawable/cerclebackgroundpink"
-                            android:src="@drawable/ic_palette_black_24dp"
+                            android:src="@drawable/ic_effect"
                             android:padding="10dp"/>
                         <TextView
                             android:id="@+id/txtEffect"
@@ -166,7 +166,7 @@
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:background="@drawable/cerclebackgroundgreen"
-                            android:src="@drawable/ic_info_black_24dp"
+                            android:src="@drawable/ic_info"
                             android:padding="10dp"/>
                         <TextView
                             android:id="@+id/txtInfo"
@@ -199,7 +199,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_height="matchparent"
                         android:gravity="center"
                         android:orientation="vertical">
 
@@ -211,7 +211,7 @@
                             android:layout_height="64dp"
                             android:background="@drawable/cerclebackgroundyellow"
                             android:padding="10dp"
-                            android:src="@drawable/ic_settings_black_24dp" />
+                            android:src="@drawable/ic_settings" />
 
                         <TextView
                             android:id="@+id/txtSetting"

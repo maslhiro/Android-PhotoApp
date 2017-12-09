@@ -5,13 +5,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import uit.nhutvinh.model.EffectTouch;
 import uit.nhutvinh.model.TakePicture;
 
 /**
@@ -24,6 +23,7 @@ public class EffectActivity extends AppCompatActivity{
     ImageView imgPic;
     BottomNavigationView bottomNavigationView;
 
+  //  TouchImageView touchImageView;
     TakePicture takePicture;
     Uri imageUri;
 
@@ -40,29 +40,30 @@ public class EffectActivity extends AppCompatActivity{
 
     private void addEvents() {
 
+        imgPic.setOnTouchListener(new EffectTouch());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if(item.getItemId()==R.id.addPic)
                 {
                     takePicture();
-                    Toast.makeText(EffectActivity.this, "Vừa nhấn add nhé :l", Toast.LENGTH_SHORT).show();
+              //      Toast.makeText(EffectActivity.this, "Vừa nhấn add nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }else  if(item.getItemId()==R.id.cropPic)
                 {
-                    Toast.makeText(EffectActivity.this, "Vừa nhấn crop nhé :l", Toast.LENGTH_SHORT).show();
+                //    Toast.makeText(EffectActivity.this, "Vừa nhấn crop nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }else if(item.getItemId()==R.id.zoomPic)
                 {
-                    Toast.makeText(EffectActivity.this, "Vừa nhấn zoom nhé :l", Toast.LENGTH_SHORT).show();
+              //      Toast.makeText(EffectActivity.this, "Vừa nhấn zoom nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }else if(item.getItemId()==R.id.drawPic)
                 {
-                    Toast.makeText(EffectActivity.this, "Vừa nhấn draw nhé :l", Toast.LENGTH_SHORT).show();
+              //      Toast.makeText(EffectActivity.this, "Vừa nhấn draw nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
-                    Toast.makeText(EffectActivity.this, "Vừa nhấn rotate nhé :l", Toast.LENGTH_SHORT).show();
+               //     Toast.makeText(EffectActivity.this, "Vừa nhấn rotate nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }
 
@@ -80,6 +81,7 @@ public class EffectActivity extends AppCompatActivity{
             takePicture.decodeUri(this, imageUri);
         }
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navBot);
+     //   touchImageView = new TouchImageView()
     }
 
     @Override
