@@ -3,6 +3,8 @@ package uit.nhutvinh.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 import android.widget.ImageView;
@@ -11,27 +13,30 @@ import android.widget.Toast;
 import java.io.FileDescriptor;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.NoSuchElementException;
+
+import static uit.nhutvinh.photoapp.R.id.imgPic;
 
 /**
  * Created by Vin Vin on 25/10/2017.
  */
 
 public class TakePicture {
-    private ImageView imgHinh;
+    private ImageView imgPic;
 
-    public TakePicture(ImageView imgHinh) {
-        this.imgHinh = imgHinh;
+    public TakePicture(ImageView imgPic) {
+        this.imgPic = imgPic;
     }
 
     public TakePicture() {
     }
 
-    public ImageView getImgHinh() {
-        return imgHinh;
+    public ImageView getImgPic() {
+        return imgPic;
     }
 
-    public void setImgHinh(ImageView imgHinh) {
-        this.imgHinh = imgHinh;
+    public void setImgPic(ImageView imgPic) {
+        this.imgPic = imgPic;
     }
 
     // Lấy file ảnh và scale ảnh phù hợp
@@ -49,7 +54,7 @@ public class TakePicture {
             BitmapFactory.decodeFileDescriptor(imageSource, null, o);
 
             // the new size we want to scale to
-            final int REQUIRED_SIZE = 2048;
+            final int REQUIRED_SIZE = 4096;
 
             // Find the correct scale value. It should be the power of 2.
             int width_tmp = o.outWidth, height_tmp = o.outHeight;
@@ -68,7 +73,7 @@ public class TakePicture {
             o2.inSampleSize = scale;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(imageSource, null, o2);
 
-            imgHinh.setImageBitmap(bitmap);
+            imgPic.setImageBitmap(bitmap);
 
         } catch (FileNotFoundException e) {
             Toast.makeText(context, "File ảnh ko khả dụng !, Vui lòng thủ lại", Toast.LENGTH_LONG).show();

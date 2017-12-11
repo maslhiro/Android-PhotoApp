@@ -9,8 +9,15 @@
         android:layout_width="match_parent"
         android:layout_height="450dp"
         android:scaleType="matrix"
-        android:layout_margin="40dp"
-        android:background="@drawable/image_border"/>
+        android:layout_margin="30dp"
+        android:adjustViewBounds="true" />
+    <ImageView
+        android:contentDescription="@null"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+         android:layout_margin="30dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/bor"/>
 
     <android.support.design.widget.BottomNavigationView
         android:layout_width="match_parent"

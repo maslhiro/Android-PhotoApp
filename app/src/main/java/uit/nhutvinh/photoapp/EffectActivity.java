@@ -1,6 +1,7 @@
 package uit.nhutvinh.photoapp;
 
 import android.content.Intent;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import uit.nhutvinh.model.EffectTouch;
+import uit.nhutvinh.model.RotatePicture;
 import uit.nhutvinh.model.TakePicture;
 
 /**
@@ -24,6 +26,7 @@ public class EffectActivity extends AppCompatActivity{
     BottomNavigationView bottomNavigationView;
 
   //  TouchImageView touchImageView;
+    RotatePicture rotatePicture;
     TakePicture takePicture;
     Uri imageUri;
 
@@ -63,6 +66,7 @@ public class EffectActivity extends AppCompatActivity{
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
+                        rotatePicture();
                //     Toast.makeText(EffectActivity.this, "Vừa nhấn rotate nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
                 }
@@ -76,6 +80,7 @@ public class EffectActivity extends AppCompatActivity{
     private void addConTrols() {
         imgPic = (ImageView) findViewById(R.id.imgPic);
         takePicture = new TakePicture(imgPic);
+        rotatePicture = new RotatePicture(imgPic);
         if (getIntent().getData() != null) {
             imageUri = getIntent().getData();
             takePicture.decodeUri(this, imageUri);
@@ -104,6 +109,13 @@ public class EffectActivity extends AppCompatActivity{
         Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
         photoPickerIntent.setType("image/*");
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
+    }
+
+    public  void rotatePicture(){
+      // rotatePicture.rotatePicture();
+        Matrix matrix = new Matrix();
+        matrix.setRotate(90,400,400);
+        imgPic.setImageMatrix(matrix);
     }
 
 
