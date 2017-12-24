@@ -10,9 +10,9 @@
         android:title="@string/cropPic" />
 
     <item
-        android:id="@+id/zoomPic"
-        android:title="@string/zoom"
-        android:icon="@drawable/ic_zoom_in"
+        android:id="@+id/gridPic"
+        android:title="@string/grid"
+        android:icon="@drawable/ic_grid_off"
         />
 
     <item

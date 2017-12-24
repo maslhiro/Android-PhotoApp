@@ -10,13 +10,11 @@
     <string name="setting">Setting</string>
     <string name="text_setting">No Info</string>
 
-
-
     <string name="request_permission">Request Permission</string>
     <string name="addPic">Add</string>
     <string name="cropPic">Crop</string>
     <string name="rotatePic">Rotate</string>
-    <string name="zoom">Zoom</string>
+    <string name="grid">Grid</string>
     <string name="zoomIn">Zoom In</string>
     <string name="zoomOut">Zoom Out</string>
     <string name="drawPic">Draw</string>

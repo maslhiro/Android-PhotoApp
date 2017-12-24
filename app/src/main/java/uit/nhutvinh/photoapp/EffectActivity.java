@@ -1,17 +1,22 @@
 package uit.nhutvinh.photoapp;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import uit.nhutvinh.model.EffectTouch;
+import uit.nhutvinh.model.EffectView;
 import uit.nhutvinh.model.RotatePicture;
 import uit.nhutvinh.model.TakePicture;
 
@@ -21,14 +26,25 @@ import uit.nhutvinh.model.TakePicture;
 
 public class EffectActivity extends AppCompatActivity{
     private static final int SELECT_PHOTO = 100;
+    boolean enabledGrid = true;
+    private float currRotateDegree = 0;
 
-    ImageView imgPic;
+    EffectView imgPic;
+    ImageView imgGrid;
+
     BottomNavigationView bottomNavigationView;
 
   //  TouchImageView touchImageView;
     RotatePicture rotatePicture;
     TakePicture takePicture;
     Uri imageUri;
+
+
+    private BitmapDrawable originalBitmapDrawable ;
+    private Bitmap originalBitmap ;
+    private int originalImageWith ;
+    private int originalImageHeight ;
+    private Bitmap.Config originalImageConfig ;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +59,6 @@ public class EffectActivity extends AppCompatActivity{
 
     private void addEvents() {
 
-        imgPic.setOnTouchListener(new EffectTouch());
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -56,9 +71,20 @@ public class EffectActivity extends AppCompatActivity{
                 {
                 //    Toast.makeText(EffectActivity.this, "Vừa nhấn crop nhé :l", Toast.LENGTH_SHORT).show();
                     return true;
-                }else if(item.getItemId()==R.id.zoomPic)
+                }else if(item.getItemId()==R.id.gridPic)
                 {
-              //      Toast.makeText(EffectActivity.this, "Vừa nhấn zoom nhé :l", Toast.LENGTH_SHORT).show();
+                    enabledGrid = !enabledGrid;
+                    if(enabledGrid){
+                        imgGrid.setVisibility(View.VISIBLE);
+                        item.setIcon(R.drawable.ic_grid_off);
+                    }
+                    else{
+                        imgGrid.setVisibility(View.INVISIBLE);
+                        item.setIcon(R.drawable.ic_grid_on);
+                    }
+
+                    Log.d("Enable Grid", String.valueOf(enabledGrid));
+
                     return true;
                 }else if(item.getItemId()==R.id.drawPic)
                 {
@@ -66,9 +92,11 @@ public class EffectActivity extends AppCompatActivity{
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
-                        rotatePicture();
-               //     Toast.makeText(EffectActivity.this, "Vừa nhấn rotate nhé :l", Toast.LENGTH_SHORT).show();
-                    return true;
+
+                    currRotateDegree += 90;
+
+                   rotateImage(currRotateDegree);
+                        return true;
                 }
 
                 return false;
@@ -78,15 +106,30 @@ public class EffectActivity extends AppCompatActivity{
     }
 
     private void addConTrols() {
-        imgPic = (ImageView) findViewById(R.id.imgPic);
+        imgPic = (EffectView) findViewById(R.id.imgPic);
+        imgGrid = (ImageView) findViewById(R.id.imgGrid);
+
         takePicture = new TakePicture(imgPic);
         rotatePicture = new RotatePicture(imgPic);
+
+//        if(imgPic.getDrawable()!=null)
+//        {
+//            originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
+//            originalBitmap = originalBitmapDrawable.getBitmap();
+//            originalImageHeight = originalBitmap.getHeight();
+//            originalImageWith = originalBitmap.getWidth();
+//            originalImageConfig = originalBitmap.getConfig();
+//        }
+
+
+        // kiem tra co gui uri tu mainactivity
         if (getIntent().getData() != null) {
             imageUri = getIntent().getData();
             takePicture.decodeUri(this, imageUri);
         }
+
         bottomNavigationView = (BottomNavigationView) findViewById(R.id.navBot);
-     //   touchImageView = new TouchImageView()
+
     }
 
     @Override
@@ -98,6 +141,15 @@ public class EffectActivity extends AppCompatActivity{
                 if (resultCode == RESULT_OK && null != imageReturnedIntent) {
 
                     takePicture.decodeUri(this,imageReturnedIntent.getData());
+
+                    if(imgPic.getDrawable()!=null)
+                    {
+                        originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
+                        originalBitmap = originalBitmapDrawable.getBitmap();
+                        originalImageHeight = originalBitmap.getHeight();
+                        originalImageWith = originalBitmap.getWidth();
+                        originalImageConfig = originalBitmap.getConfig();
+                    }
                 }
         }
 
@@ -111,13 +163,35 @@ public class EffectActivity extends AppCompatActivity{
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
     }
 
-    public  void rotatePicture(){
-      // rotatePicture.rotatePicture();
-        Matrix matrix = new Matrix();
-        matrix.setRotate(90,400,400);
-        imgPic.setImageMatrix(matrix);
-    }
+//    public  void rotatePicture(){
+//        rotatePicture.setBitmap(imgPic.getImgBitmap());
+//        rotatePicture.rotatePicture();
+//     //   imgPic.setImgBitmap(rotatePicture.getBitmap());
+//    }
 
+    private void rotateImage(float rotateDegree)
+    {
+//        final ImageView imageViewOriginal = (ImageView)findViewById(R.id.imageViewOriginal);
+//        BitmapDrawable originalBitmapDrawable = (BitmapDrawable) imageViewOriginal.getDrawable();
+//        final Bitmap originalBitmap = originalBitmapDrawable.getBitmap();
+//        final int originalImageWith = originalBitmap.getWidth();
+//        final int originalImageHeight = originalBitmap.getHeight();
+//        final Config originalImageConfig = originalBitmap.getConfig();
+
+        // Create a bitmap which has same width and height value of original bitmap.
+        Bitmap rotateBitmap = Bitmap.createBitmap(originalImageWith, originalImageHeight, originalImageConfig);
+
+        Canvas rotateCanvas = new Canvas(rotateBitmap);
+
+        Matrix rotateMatrix = new Matrix();
+
+        // Rotate around the center point of the original image.
+        rotateMatrix.setRotate(rotateDegree, originalBitmap.getWidth()/2, originalBitmap.getHeight()/2);
+
+        Paint paint = new Paint();
+        rotateCanvas.drawBitmap(originalBitmap, rotateMatrix, paint);
+        imgPic.setImgBitmap(rotateBitmap);
+    }
 
 
 

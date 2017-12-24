@@ -3,6 +3,8 @@ package uit.nhutvinh.model;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -22,20 +24,20 @@ import static uit.nhutvinh.photoapp.R.id.imgPic;
  */
 
 public class TakePicture {
-    private ImageView imgPic;
+    private EffectView imgPic;
 
-    public TakePicture(ImageView imgPic) {
+    public TakePicture(EffectView imgPic) {
         this.imgPic = imgPic;
     }
 
     public TakePicture() {
     }
 
-    public ImageView getImgPic() {
+    public EffectView getImgPic() {
         return imgPic;
     }
 
-    public void setImgPic(ImageView imgPic) {
+    public void setImgPic(EffectView imgPic) {
         this.imgPic = imgPic;
     }
 
@@ -72,8 +74,17 @@ public class TakePicture {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(imageSource, null, o2);
+            imgPic.setImgBitmap(bitmap);
 
-            imgPic.setImageBitmap(bitmap);
+        // chinh lai image center view\
+//        Drawable image = imgPic.getDrawable();
+//        RectF rectfView = new RectF(0,0,imgPic.getWidth(),imgPic.getHeight());
+//        RectF rectfImage = new RectF(0,0,image.getIntrinsicWidth(),image.getIntrinsicHeight());
+//        Matrix matrix = new Matrix();
+//        matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
+//        imgPic.setImageMatrix(matrix);
+
+
 
         } catch (FileNotFoundException e) {
             Toast.makeText(context, "File ảnh ko khả dụng !, Vui lòng thủ lại", Toast.LENGTH_LONG).show();
