@@ -147,7 +147,7 @@ public class MainActivity extends AbsRuntimePermission {
     public void showPopup(View v) {
         TextView txtClosePop;
 
-        popupInfo.setContentView(R.layout.popup);
+        popupInfo.setContentView(R.layout.info_popup);
         txtClosePop =(TextView) popupInfo.findViewById(R.id.txtClosePopup);
 
         txtClosePop.setOnClickListener(new View.OnClickListener() {

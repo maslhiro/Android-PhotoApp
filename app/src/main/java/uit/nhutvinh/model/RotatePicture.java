@@ -1,81 +1,76 @@
 package uit.nhutvinh.model;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
-import android.widget.ImageView;
+
 
 /**
- * Created by Vin Vin on 11/12/2017.
+ * Created by Vin Vin on 24/12/2017.
  */
 
 public class RotatePicture {
+
     private EffectView imgPic;
-    private Matrix matrix;
-    private Bitmap bitmap = null;
+    private BitmapDrawable originalBitmapDrawable ;
+    private Bitmap originalBitmap ;
+    private int originalImageWith ;
+    private int originalImageHeight ;
+    private Bitmap.Config originalImageConfig ;
 
-    private Paint paint ;
-    private Canvas canvas;
-
-    public void rotatePicture(){
-        if(bitmap!=null){
-            Bitmap.Config config = bitmap.getConfig();
-
-            Bitmap rotateBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), config);
-//
-//            Bitmap workingBitmap = Bitmap.createBitmap(bitmap);
-//            Bitmap mutableBitmap = workingBitmap.copy(Bitmap.Config.ARGB_8888, true);
-//            canvas = new Canvas(mutableBitmap);
-            canvas = new Canvas(rotateBitmap);
-
-
-            matrix = new Matrix();
-            paint = new Paint();
-            matrix.setRotate(90,bitmap.getWidth()/2,bitmap.getHeight()/2);
-            canvas.drawBitmap(bitmap,matrix,paint);
-            imgPic.setImgBitmap(bitmap);
-        }
-
-    }
     public RotatePicture() {
     }
 
     public RotatePicture(EffectView imgPic) {
-        if (imgPic.getImgBitmap() != null) {
-            this.imgPic = imgPic;
-            bitmap = imgPic.getImgBitmap();
-
-
-        }
-    }
-
-    public Bitmap getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap bitmap) {
-        this.bitmap = bitmap;
+        this.imgPic = imgPic;
     }
 
     public EffectView getImgPic() {
-
         return imgPic;
     }
 
     public void setImgPic(EffectView imgPic) {
         this.imgPic = imgPic;
+        initCanvas();
     }
 
-    public Matrix getMatrix() {
-        return matrix;
+    public Bitmap getOriginalBitmap() {
+        return originalBitmap;
     }
 
-    public void setMatrix(Matrix matrix) {
-        this.matrix = matrix;
+    public void setOriginalBitmap(Bitmap originalBitmap) {
+        this.originalBitmap = originalBitmap;
+    }
+
+    public void initCanvas(){
+        if(imgPic.getDrawable()!=null)
+        {
+            originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
+            originalBitmap = originalBitmapDrawable.getBitmap();
+            originalImageHeight = originalBitmap.getHeight();
+            originalImageWith = originalBitmap.getWidth();
+            originalImageConfig = originalBitmap.getConfig();
+        }
     }
 
 
+    public void rotateImage(float rotateDegree)
+    {
+
+        // Create a bitmap which has same width and height value of original bitmap.
+        Bitmap rotateBitmap = Bitmap.createBitmap(originalImageWith, originalImageHeight, originalImageConfig);
+
+        Canvas rotateCanvas = new Canvas(rotateBitmap);
+
+        Matrix rotateMatrix = new Matrix();
+
+        // Rotate around the center point of the original image.
+        rotateMatrix.setRotate(rotateDegree, originalBitmap.getWidth()/2, originalBitmap.getHeight()/2);
+
+        Paint paint = new Paint();
+        rotateCanvas.drawBitmap(originalBitmap, rotateMatrix, paint);
+        imgPic.setOriginalBitmap(rotateBitmap);
+    }
 }

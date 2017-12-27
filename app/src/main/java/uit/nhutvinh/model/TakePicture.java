@@ -74,7 +74,7 @@ public class TakePicture {
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(imageSource, null, o2);
-            imgPic.setImgBitmap(bitmap);
+            imgPic.setOriginalBitmap(bitmap);
 
         // chinh lai image center view\
 //        Drawable image = imgPic.getDrawable();

@@ -1,19 +1,25 @@
 package uit.nhutvinh.model;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Path;
 import android.graphics.PointF;
-import android.graphics.Rect;
+
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import static uit.nhutvinh.photoapp.R.id.imgPic;
+import java.util.ArrayList;
+
+
 
 
 /**
@@ -24,15 +30,14 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     // Debug Logcat
     private static final String TAG = "Effect View";
 
-    private float FLAG = 0 ;
 
-    private Bitmap imgBitmap = null;
     private static Matrix matrix = new Matrix();
     private static Matrix savedMatrix = new Matrix();
 
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
+  //  private static final int DRAW = 3;
 
     private static  final  float MAX_ZOOM = 5.0f;
     private static  final  float MIN_ZOOM =0.5f;
@@ -43,16 +48,29 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     private PointF mid = new PointF();
     private float oldDist = 1f;
 
-    private float dx; // postTranslate X distance
-    private float dy; // postTranslate Y distance
-    private float[] matrixValues = new float[9];
-    float matrixX = 0; // X coordinate of matrix inside the ImageView
-    float matrixY = 0; // Y coordinate of matrix inside the ImageView
-    float width = 0; // width of drawable
-    float height = 0; // height of drawable
+    // true ->cho phép zoom và drag trên view
+    // false -> ko cho phép ( drawing )
+    private boolean enableZoomDrag;
+    private boolean enableDraw;
 
-    int viewWidth = 0;
-    int viewHeight =0;
+
+    // ------- test draw undo redo
+
+    private Path mPath;
+    private Paint mPaint;
+    private ArrayList<Path> paths = new ArrayList<>();
+    private ArrayList<Path> undonePaths = new ArrayList<>();
+    private float mX = 0, mY = 0;
+    private static final float TOUCH_TOLERANCE = 4;
+
+    // canvas ve len man hinh
+    private Canvas  mCanvas;
+    // drawable tu view -> get height witdh config
+    private BitmapDrawable drawableBitmap = null;
+    // bitmap -> view
+    private Bitmap originalBitmap = null;
+    // bitamp ve len view
+    private Bitmap drawingBitmap = null;
 
     public EffectView(Context context) {
         super(context);
@@ -65,66 +83,98 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         init();
     }
 
-    public Bitmap getImgBitmap() {
-         return imgBitmap;
+    public boolean isEnableDraw() {
+        return enableDraw;
     }
 
-    public void setImgBitmap(Bitmap imgBitmap) {
-
-            this.imgBitmap = imgBitmap;
-            setImageBitmap(this.imgBitmap);
-
-            //  chinh lai image center view
-            Drawable image = getDrawable();
-            RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
-            RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-            matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
-            setImageMatrix(matrix);
-
+    public void setEnableDraw(boolean enableDraw) {
+        this.enableDraw = enableDraw;
     }
+
+    public boolean isEnableZoomDrag() {
+        return enableZoomDrag;
+    }
+
+    public void setEnableZoomDrag(boolean enableZoomDrag) {
+        this.enableZoomDrag = enableZoomDrag;
+    }
+
+
+    public Bitmap getOriginalBitmap() {
+        return originalBitmap;
+    }
+
+    public void setOriginalBitmap(Bitmap originalBitmap) {
+        this.originalBitmap = originalBitmap;
+        setImageBitmap(this.originalBitmap);
+
+        drawableBitmap = (BitmapDrawable) this.getDrawable();
+        originalBitmap = drawableBitmap.getBitmap();
+        drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
+        mCanvas = new Canvas(drawingBitmap);
+
+        //  chinh lai image center view
+        Drawable image = getDrawable();
+        RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
+        RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+        matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
+        setImageMatrix(matrix);
+    }
+
+
+
     @Override
     protected void onDraw(Canvas canvas) {
+        if(enableDraw){
+            //super.onDraw(canvas);
+            canvas.drawBitmap(originalBitmap,0,0,null);
+            for (Path p : paths){
+                canvas.drawPath(p, mPaint);
+            }
 
-        super.onDraw(canvas);
+        }
+        else super.onDraw(canvas);
 
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
-        if(imgBitmap==null) return false;
 
-        switch (event.getAction() & MotionEvent.ACTION_MASK) {
+        if(originalBitmap ==null) return false;
 
-            // khi cham vao man hinh
-            case MotionEvent.ACTION_DOWN:
-                savedMatrix.set(matrix);
-                start.set(event.getX(), event.getY());
-                mode = DRAG;
-                break;
-            //Khi cham vao 1 diem
-            case MotionEvent.ACTION_POINTER_DOWN:
-                oldDist = spacing(event);
-                if (oldDist >10f) {
+        if(enableZoomDrag&&!enableDraw){
+            switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+                // khi cham vao man hinh
+                case MotionEvent.ACTION_DOWN:
                     savedMatrix.set(matrix);
-                    midPoint(mid, event);
-                    mode = ZOOM;
-                }
-                break;
+                    start.set(event.getX(), event.getY());
+                    mode = DRAG;
+                    break;
+                //Khi cham vao 1 diem
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    oldDist = spacing(event);
+                    if (oldDist >10f) {
+                        savedMatrix.set(matrix);
+                        midPoint(mid, event);
+                        mode = ZOOM;
+                    }
+                    break;
 
-            case MotionEvent.ACTION_UP:
-            case MotionEvent.ACTION_POINTER_UP:
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_POINTER_UP:
 
-                mode = NONE;
+                    mode = NONE;
 
-                break;
+                    break;
 
-            // ngon tay di chuyen tren man hinh
-            case MotionEvent.ACTION_MOVE:
-                if (mode == DRAG) {
+                // ngon tay di chuyen tren man hinh
+                case MotionEvent.ACTION_MOVE:
+                    if (mode == DRAG) {
 
-//                    matrix.set(savedMatrix);
-//                    matrix.postTranslate(event.getX() - start.x, event.getY() - start.y);
+                        matrix.set(savedMatrix);
+                        matrix.postTranslate(event.getX() - start.x, event.getY() - start.y);
 //                    limitDrag(matrix);
 
 
@@ -158,33 +208,50 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 //                    }
 //                    matrix.postTranslate(dx, dy);
 
-                } else if (mode == ZOOM) {
-                    float newDist = spacing(event);
-                    if (newDist > 10f ) {
-                        float scale = newDist / oldDist;
-//                        matrix.set(savedMatrix);
-//                       matrix.postScale(scale, scale, mid.x, mid.y);
+                    } else if (mode == ZOOM) {
+                        float newDist = spacing(event);
+                        if (newDist > 10f ) {
+                            float scale = newDist / oldDist;
+                            matrix.set(savedMatrix);
+                            float[] values = new float[9];
+                            matrix.getValues(values);
+                            float currentScale = values[Matrix.MSCALE_X];
 
-                        float[] values = new float[9];
-                        matrix.getValues(values);
-                        float currentScale = values[Matrix.MSCALE_X];
-
-                        if(scale * currentScale >=   MAX_ZOOM)
-                            scale = MAX_ZOOM / currentScale;
-                        else if (scale * currentScale <= MIN_ZOOM)
-                            scale = MIN_ZOOM / currentScale;
-                        matrix.postScale(scale, scale, mid.x, mid.y);
+                            if(scale * currentScale >=   MAX_ZOOM)
+                                scale = MAX_ZOOM / currentScale;
+                            else if (scale * currentScale <= MIN_ZOOM)
+                                scale = MIN_ZOOM / currentScale;
+                            matrix.postScale(scale, scale, mid.x, mid.y);
+                        }
                     }
-                }
-                break;
+                    break;
 
 
 
+            }
+            //limitZoom(matrix);
+
+            this.setImageMatrix(matrix);
+            return true;
+
+        }else if (!enableZoomDrag&&enableDraw){
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    touch_start(event.getX(), event.getY());
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    touch_move(event.getX(), event.getY());
+                    invalidate();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    touch_up();
+                    invalidate();
+                    break;
+            }
+            return true;
         }
-       //limitZoom(matrix);
-
-        this.setImageMatrix(matrix);
-        return true; // indicate event was handled
+        else return false;
 
     }
 
@@ -200,51 +267,112 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         return  (float)Math.sqrt(x * x + y * y);
     }
 
-    private void limitDrag(Matrix m) {
-        float[] values = new float[9];
-        m.getValues(values);
-        float transX = values[Matrix.MTRANS_X];
-        float transY = values[Matrix.MTRANS_Y];
-        float scaleX = values[Matrix.MSCALE_X];
-        float scaleY = values[Matrix.MSCALE_Y];
-
-        Rect bounds = this.getDrawable().getBounds();
-
-
-        int width = bounds.right - bounds.left;
-        int height = bounds.bottom - bounds.top;
-
-        float minX = (-width + 20) * scaleX;
-        float minY = (-height + 20) * scaleY;
-
-        if(transX > (getWidth() - 20)) {
-            transX = getWidth() - 20;
-        } else if(transX < minX) {
-            transX = minX;
-        }
-
-        if(transY > (getHeight() - 80)) {
-            transY = getHeight() - 80;
-        } else if(transY < minY) {
-            transY = minY;
-        }
-
-        values[Matrix.MTRANS_X] = transX;
-        values[Matrix.MTRANS_Y] = transY;
-        m.setValues(values);
-
-    }
+//    private void limitDrag(Matrix m) {
+//        float[] values = new float[9];
+//        m.getValues(values);
+//        float transX = values[Matrix.MTRANS_X];
+//        float transY = values[Matrix.MTRANS_Y];
+//        float scaleX = values[Matrix.MSCALE_X];
+//        float scaleY = values[Matrix.MSCALE_Y];
+//
+//        Rect bounds = this.getDrawable().getBounds();
+//
+//
+//        int width = bounds.right - bounds.left;
+//        int height = bounds.bottom - bounds.top;
+//
+//        float minX = (-width + 20) * scaleX;
+//        float minY = (-height + 20) * scaleY;
+//
+//        if(transX > (getWidth() - 20)) {
+//            transX = getWidth() - 20;
+//        } else if(transX < minX) {
+//            transX = minX;
+//        }
+//
+//        if(transY > (getHeight() - 80)) {
+//            transY = getHeight() - 80;
+//        } else if(transY < minY) {
+//            transY = minY;
+//        }
+//
+//        values[Matrix.MTRANS_X] = transX;
+//        values[Matrix.MTRANS_Y] = transY;
+//        m.setValues(values);
+//
+//    }
 
     private void init(){
-        viewWidth = getResources().getDisplayMetrics().widthPixels;
-        viewHeight = getResources().getDisplayMetrics().heightPixels;
+        // set mode
+        enableZoomDrag = true;
+        enableDraw = false;
 
-        Log.d(TAG,"viewWidth : " + viewWidth);
-        Log.d(TAG,"viewHeight : " + viewHeight);
+
+
+        // draw path
+        mPaint = new Paint();
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setColor(Color.GREEN);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeCap(Paint.Cap.ROUND);
+        mPaint.setStrokeWidth(10);
+        mCanvas = new Canvas();
+        mPath = new Path();
+        paths.add(mPath);
+
+
+       // Log.d(TAG,"viewWidth : " + viewWidth);
+       // Log.d(TAG,"viewHeight : " + viewHeight);
 
 
     }
 
+    private void touch_start(float x, float y) {
+        mPath.reset();
+        mPath.moveTo(x, y);
+        mX = x;
+        mY = y;
+    }
+
+    private void touch_move(float x, float y) {
+        float dx = Math.abs(x - mX);
+        float dy = Math.abs(y - mY);
+        if (dx >= TOUCH_TOLERANCE || dy >= TOUCH_TOLERANCE) {
+            mPath.quadTo(mX, mY, (x + mX)/2, (y + mY)/2);
+            mX = x;
+            mY = y;
+        }
+    }
+
+    private void touch_up() {
+        mPath.lineTo(mX, mY);
+        // commit the path to our offscreen
+        mCanvas.drawPath(mPath, mPaint);
+        // kill this so we don't double draw
+        mPath = new Path();
+        paths.add(mPath);
+    }
+
+    public void onClickUndo () {
+        if (paths.size()>0)  {
+            undonePaths.add(paths.remove(paths.size()-1));
+            invalidate();
+        } else  {
+            Log.i("undo", "Undo elsecondition");
+        }
+    }
+
+    public void onClickRedo (){
+        if (undonePaths.size()>0)  {
+            paths.add(undonePaths.remove(undonePaths.size()-1));
+            invalidate();
+        }
+        else  {
+            Log.i("undo", "Redo elsecondition");
+        }
+    }
 
 
 }
