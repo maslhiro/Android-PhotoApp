@@ -89,6 +89,30 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 
     public void setEnableDraw(boolean enableDraw) {
         this.enableDraw = enableDraw;
+        // khi chuyen ve mode zoom drad -> save lai bitmap ( save lun cac path da ve len man hinh )
+        if(!enableDraw && this.getDrawable()!=null){
+            drawableBitmap = (BitmapDrawable) this.getDrawable();
+        //    originalBitmap = drawableBitmap.getBitmap();
+            drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
+            mCanvas = new Canvas(drawingBitmap);
+
+            // ve bitmap va cac path lai
+           //  matrix = savedMatrix;
+            mCanvas.drawBitmap(originalBitmap,getImageMatrix(),null);
+            for (Path p : paths){
+                mCanvas.drawPath(p, mPaint);
+            }
+
+
+            setOriginalBitmap(drawingBitmap);
+            mPath = new Path();
+            paths.add(mPath);
+            //mPath.reset();
+           // mPath.
+        }
+
+
+
     }
 
     public boolean isEnableZoomDrag() {
@@ -97,6 +121,7 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 
     public void setEnableZoomDrag(boolean enableZoomDrag) {
         this.enableZoomDrag = enableZoomDrag;
+
     }
 
 
@@ -109,16 +134,19 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         setImageBitmap(this.originalBitmap);
 
         drawableBitmap = (BitmapDrawable) this.getDrawable();
-        originalBitmap = drawableBitmap.getBitmap();
+       // this.originalBitmap = drawableBitmap.getBitmap();
         drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
         mCanvas = new Canvas(drawingBitmap);
 
         //  chinh lai image center view
-        Drawable image = getDrawable();
-        RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
-        RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-        matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
-        setImageMatrix(matrix);
+       //if(!enableDraw){
+            Drawable image = getDrawable();
+            RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
+            RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+            matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
+            setImageMatrix(matrix);
+      // }
+
     }
 
 
@@ -126,15 +154,22 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         if(enableDraw){
-            //super.onDraw(canvas);
-            canvas.drawBitmap(originalBitmap,0,0,null);
+            super.onDraw(canvas);
+
+            //canvas.drawBitmap(drawableBitmap.getBitmap(),0,0,null);
             for (Path p : paths){
                 canvas.drawPath(p, mPaint);
             }
 
-        }
-        else super.onDraw(canvas);
+            // ko taoj doi tuong o day anh huong den bo nho
+//            setImageDrawable(new BitmapDrawable(getResources(), drawingBitmap));
+//            originalBitmap = ((BitmapDrawable)this.getDrawable()).getBitmap();
+//            setOriginalBitmap(originalBitmap);
 
+        }
+        else
+            super.onDraw(canvas);
+           // canvas.drawBitmap(drawableBitmap.getBitmap(),0,0,null);
     }
 
     @Override
@@ -143,7 +178,7 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 
         if(originalBitmap ==null) return false;
 
-        if(enableZoomDrag&&!enableDraw){
+        if(enableZoomDrag  && !enableDraw){
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
 
                 // khi cham vao man hinh
@@ -234,7 +269,7 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
             this.setImageMatrix(matrix);
             return true;
 
-        }else if (!enableZoomDrag&&enableDraw){
+        }else if ( !enableZoomDrag && enableDraw){
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     touch_start(event.getX(), event.getY());
@@ -249,6 +284,7 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
                     invalidate();
                     break;
             }
+
             return true;
         }
         else return false;

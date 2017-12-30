@@ -26,7 +26,7 @@ import uit.nhutvinh.model.TakePicture;
  * Created by Vin Vin on 06/12/2017.
  */
 
-public class EffectActivity extends AppCompatActivity{
+public class EffectActivity extends AppCompatActivity {
     private static final int SELECT_PHOTO = 100;
     boolean enabledGrid = true;
     private float currRotateDegree = 0;
@@ -40,16 +40,6 @@ public class EffectActivity extends AppCompatActivity{
     TakePicture takePicture;
     Uri imageUri;
 
-
-    // Test Draw Image
- //   private BitmapDrawable originalBitmapDrawable ;
-//    private Bitmap originalBitmap ;
-//    private int originalImageWith ;
-//    private int originalImageHeight ;
-//    private Bitmap.Config originalImageConfig ;
-
-
-   // float downx = 0, downy = 0, upx = 0, upy = 0;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,10 +62,11 @@ public class EffectActivity extends AppCompatActivity{
 
                 }else  if(item.getItemId()==R.id.cropPic)
                 {
-                //    Toast.makeText(EffectActivity.this, "Vừa nhấn crop nhé :l", Toast.LENGTH_SHORT).show();
+
                     return true;
                 }else if(item.getItemId()==R.id.gridPic)
                 {
+
                     enabledGrid = !enabledGrid;
                     if(enabledGrid){
                         imgGrid.setVisibility(View.VISIBLE);
@@ -160,8 +151,10 @@ public class EffectActivity extends AppCompatActivity{
     }
 
     public void rotatePicture(float rotateDegree) {
+
         imgPic.setEnableDraw(false);
         imgPic.setEnableZoomDrag(true);
+        if(imgPic.getOriginalBitmap()!=null)
         rotatePicture.rotateImage(rotateDegree);
 
     }
@@ -169,45 +162,7 @@ public class EffectActivity extends AppCompatActivity{
     public  void drawPicture(){
         imgPic.setEnableDraw(true);
         imgPic.setEnableZoomDrag(false);
-//        Bitmap bitmap = Bitmap.createBitmap(originalImageWith, originalImageHeight, originalImageConfig);
-//
-//        final Canvas canvas = new Canvas(bitmap);
-//
-//        final Paint paint = new Paint();
-//        paint.setColor(Color.GREEN);
-//        downx = 0; downy = 0; upx = 0; upy = 0;
-//
-//        imgPic.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                int action = event.getAction();
-//                switch (action) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        downx = event.getX();
-//                        downy = event.getY();
-//                        break;
-//                    case MotionEvent.ACTION_MOVE:
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        upx = event.getX();
-//                        upy = event.getY();
-//                        canvas.drawLine(downx, downy, upx, upy, paint);
-//
-//                        // ve lai img pic lien tuc
-//                        imgPic.invalidate();
-//                        break;
-//                    case MotionEvent.ACTION_CANCEL:
-//                        break;
-//                    default:
-//                        break;
-//                }
-//
-//                return true;
-//
-//
-//            }
-//
-//        });
+
     }
 
 

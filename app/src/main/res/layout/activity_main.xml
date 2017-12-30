@@ -205,20 +205,20 @@
 
                         <ImageButton
                             android:contentDescription="@null"
-                            android:id="@+id/btnSetting"
+                            android:id="@+id/btnExit"
                             android:scaleType="fitCenter"
                             android:layout_width="64dp"
                             android:layout_height="64dp"
                             android:background="@drawable/cerclebackgroundyellow"
                             android:padding="10dp"
-                            android:src="@drawable/ic_settings" />
+                            android:src="@drawable/ic_exit_to_app" />
 
                         <TextView
-                            android:id="@+id/txtSetting"
+                            android:id="@+id/txtExit"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="10dp"
-                            android:text="@string/setting"
+                            android:text="@string/exit"
                             android:textStyle="bold" />
 
                         <View
@@ -232,7 +232,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:padding="5dp"
-                            android:text="@string/text_setting"
+                            android:text="@string/text_exit"
                             android:textColor="@android:color/darker_gray" />
 
                     </LinearLayout>

@@ -7,8 +7,8 @@
     <string name="text_edit">No Info</string>
     <string name="info">Info</string>
     <string name="text_info">No Info</string>
-    <string name="setting">Setting</string>
-    <string name="text_setting">No Info</string>
+    <string name="exit">Exit</string>
+    <string name="text_exit">No Info</string>
 
     <string name="request_permission">Request Permission</string>
     <string name="addPic">Add</string>
@@ -20,5 +20,9 @@
     <string name="drawPic">Draw</string>
     <string name="version_app">Version 1.0</string>
     <string name="info_student_01">Developed by Le Nhut Vinh - 15521016</string>
+    <string name="language">Language</string>
+    <string name="viet">Tiếng Việt</string>
+    <string name="english">English</string>
+    <string name="logo">Đồ án Nhập Môn Ứng Dụng Di Động</string>
 
 </resources>

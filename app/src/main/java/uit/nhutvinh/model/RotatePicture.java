@@ -42,6 +42,7 @@ public class RotatePicture {
 
     public void setOriginalBitmap(Bitmap originalBitmap) {
         this.originalBitmap = originalBitmap;
+        initCanvas();
     }
 
     public void initCanvas(){

@@ -24,11 +24,11 @@ import java.util.Date;
 import uit.nhutvinh.model.AbsRuntimePermission;
 
 
-public class MainActivity extends AbsRuntimePermission {
+public class MainActivity extends AbsRuntimePermission implements View.OnClickListener {
 
     private static final int REQUEST_PERMISSION = 10;
-    ImageButton btnCamera,btnEffect,btnInfo,btnSetting;
-    TextView txtCamera,txtEffect,txtInfo,txtSetting;
+    ImageButton btnCamera,btnEffect,btnInfo,btnExit;
+    TextView txtCamera,txtEffect,txtInfo,txtExit;
     Typeface font;
     Dialog popupInfo;
     private Uri imageUri;
@@ -45,26 +45,10 @@ public class MainActivity extends AbsRuntimePermission {
     }
 
     private void addEvents() {
-        btnInfo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPopup(v);
-            }
-        });
-
-        btnCamera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                takePicture(v);
-            }
-        });
-
-        btnEffect.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-               doOpenEffectActivity();
-            }
-        });
+        btnInfo.setOnClickListener(this);
+        btnCamera.setOnClickListener(this);
+        btnEffect.setOnClickListener(this);
+        btnExit.setOnClickListener(this);
 
     }
 
@@ -73,26 +57,25 @@ public class MainActivity extends AbsRuntimePermission {
 
         btnCamera = (ImageButton) findViewById(R.id.btnCamera);
         btnEffect = (ImageButton) findViewById(R.id.btnEffect);
-        btnSetting = (ImageButton) findViewById(R.id.btnSetting);
+        btnExit = (ImageButton) findViewById(R.id.btnExit);
         btnInfo = (ImageButton) findViewById(R.id.btnInfo);
 
-
+        txtExit = (TextView) findViewById(R.id.txtExit);
         txtCamera = (TextView) findViewById(R.id.txtCamera);
         txtEffect = (TextView) findViewById(R.id.txtEffect);
         txtInfo = (TextView) findViewById(R.id.txtInfo);
-        txtSetting = (TextView) findViewById(R.id.txtSetting);
+
 
 
         font = Typeface.createFromAsset(this.getAssets(),"fonts/amita-regular.ttf");
         txtCamera.setTypeface(font);
-        txtSetting.setTypeface(font);
         txtInfo.setTypeface(font);
         txtEffect.setTypeface(font);
     }
 
     @Override
     public void onPermissionsGranted(int requestCode) {
-        Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(), "Permission granted", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -140,10 +123,16 @@ public class MainActivity extends AbsRuntimePermission {
                 "IMG_"+ timeStamp + ".jpg");
     }
 
+    private  void exitApp(){
+        int pid = android.os.Process.myPid();
+        android.os.Process.killProcess(pid);
+    }
+
     private void doOpenEffectActivity() {
         Intent intent=new Intent(MainActivity.this, EffectActivity.class);
         startActivity(intent);
     }
+
     public void showPopup(View v) {
         TextView txtClosePop;
 
@@ -160,4 +149,24 @@ public class MainActivity extends AbsRuntimePermission {
         popupInfo.show();
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId())
+        {
+            case R.id.btnEffect:
+                doOpenEffectActivity();
+                break;
+            case  R.id.btnCamera:
+                takePicture(v);
+                break;
+            case  R.id.btnInfo:
+                showPopup(v);
+                break;
+            case  R.id.btnExit:
+                exitApp();
+                break;
+            default:
+                break;
+        }
+    }
 }
