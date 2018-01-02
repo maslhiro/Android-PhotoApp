@@ -1,3 +1,4 @@
+
 package uit.nhutvinh.model;
 
 import android.graphics.Bitmap;
@@ -14,17 +15,17 @@ import android.graphics.drawable.BitmapDrawable;
 public class RotatePicture {
 
     private EffectView imgPic;
-    private BitmapDrawable originalBitmapDrawable ;
-    private Bitmap originalBitmap ;
-    private int originalImageWith ;
-    private int originalImageHeight ;
-    private Bitmap.Config originalImageConfig ;
+    private BitmapDrawable originalBitmapDrawable;
+    private Bitmap originalBitmap;
+    private int originalImageWith;
+    private int originalImageHeight;
+    private Bitmap.Config originalImageConfig;
 
     public RotatePicture() {
     }
 
     public RotatePicture(EffectView imgPic) {
-        this.imgPic = imgPic;
+       setImgPic(imgPic);
     }
 
     public EffectView getImgPic() {
@@ -45,9 +46,8 @@ public class RotatePicture {
         initCanvas();
     }
 
-    public void initCanvas(){
-        if(imgPic.getDrawable()!=null)
-        {
+    public void initCanvas() {
+        if (imgPic.getDrawable() != null) {
             originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
             originalBitmap = originalBitmapDrawable.getBitmap();
             originalImageHeight = originalBitmap.getHeight();
@@ -57,8 +57,7 @@ public class RotatePicture {
     }
 
 
-    public void rotateImage(float rotateDegree)
-    {
+    public Bitmap rotatePicture(float rotateDegree) {
 
         // Create a bitmap which has same width and height value of original bitmap.
         Bitmap rotateBitmap = Bitmap.createBitmap(originalImageWith, originalImageHeight, originalImageConfig);
@@ -68,10 +67,11 @@ public class RotatePicture {
         Matrix rotateMatrix = new Matrix();
 
         // Rotate around the center point of the original image.
-        rotateMatrix.setRotate(rotateDegree, originalBitmap.getWidth()/2, originalBitmap.getHeight()/2);
+        rotateMatrix.setRotate(rotateDegree, originalBitmap.getWidth() / 2, originalBitmap.getHeight() / 2);
 
         Paint paint = new Paint();
         rotateCanvas.drawBitmap(originalBitmap, rotateMatrix, paint);
-        imgPic.setOriginalBitmap(rotateBitmap);
+
+        return rotateBitmap;
     }
 }

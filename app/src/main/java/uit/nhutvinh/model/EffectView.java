@@ -33,11 +33,12 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 
     private static Matrix matrix = new Matrix();
     private static Matrix savedMatrix = new Matrix();
+    private final float[] valuesMatrix = new float[9];
 
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
-  //  private static final int DRAW = 3;
+    private static final int DRAW = 3;
 
     private static  final  float MAX_ZOOM = 5.0f;
     private static  final  float MIN_ZOOM =0.5f;
@@ -53,6 +54,9 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     private boolean enableZoomDrag;
     private boolean enableDraw;
 
+    //
+    private double mRotatedWidth;
+    private double mRotatedHeight;
 
     // ------- test draw undo redo
 
@@ -90,26 +94,33 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     public void setEnableDraw(boolean enableDraw) {
         this.enableDraw = enableDraw;
         // khi chuyen ve mode zoom drad -> save lai bitmap ( save lun cac path da ve len man hinh )
-        if(!enableDraw && this.getDrawable()!=null){
+        if(!enableDraw && this.getDrawable()!=null && mode==DRAW ){
             drawableBitmap = (BitmapDrawable) this.getDrawable();
-        //    originalBitmap = drawableBitmap.getBitmap();
+            //originalBitmap = drawableBitmap.getBitmap();
             drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
+
+            Log.d("draw", String.valueOf(drawableBitmap.getBitmap().getWidth()));
+            Log.d("draw", String.valueOf(drawableBitmap.getBitmap().getHeight()));
             mCanvas = new Canvas(drawingBitmap);
 
             // ve bitmap va cac path lai
-           //  matrix = savedMatrix;
             mCanvas.drawBitmap(originalBitmap,getImageMatrix(),null);
+
             for (Path p : paths){
                 mCanvas.drawPath(p, mPaint);
             }
 
 
             setOriginalBitmap(drawingBitmap);
-            mPath = new Path();
+            paths = new ArrayList<>();
+            undonePaths = new ArrayList<>();
             paths.add(mPath);
-            //mPath.reset();
-           // mPath.
+            mode = NONE;
+
         }
+
+
+
 
 
 
@@ -124,59 +135,54 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
 
     }
 
-
     public Bitmap getOriginalBitmap() {
         return originalBitmap;
     }
 
     public void setOriginalBitmap(Bitmap originalBitmap) {
         this.originalBitmap = originalBitmap;
-        setImageBitmap(this.originalBitmap);
+        setImageBitmap(originalBitmap);
 
-        drawableBitmap = (BitmapDrawable) this.getDrawable();
-       // this.originalBitmap = drawableBitmap.getBitmap();
-        drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
-        mCanvas = new Canvas(drawingBitmap);
+        if(originalBitmap!=null) {
 
-        //  chinh lai image center view
-       //if(!enableDraw){
-            Drawable image = getDrawable();
-            RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
-            RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
-            matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
-            setImageMatrix(matrix);
-      // }
+            drawableBitmap = (BitmapDrawable) getDrawable();
+            drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
+            mCanvas = new Canvas(drawingBitmap);
+
+            //  chinh lai image center view
+                            Drawable image = getDrawable();
+                RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
+                RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
+                matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
+
+                setImageMatrix(matrix);
+
+
+        }
+
 
     }
 
-
-
     @Override
     protected void onDraw(Canvas canvas) {
-        if(enableDraw){
+        if (enableDraw) {
             super.onDraw(canvas);
-
-            //canvas.drawBitmap(drawableBitmap.getBitmap(),0,0,null);
-            for (Path p : paths){
+            // hien thi cac path da ve
+            for (Path p : paths) {
                 canvas.drawPath(p, mPaint);
             }
 
-            // ko taoj doi tuong o day anh huong den bo nho
-//            setImageDrawable(new BitmapDrawable(getResources(), drawingBitmap));
-//            originalBitmap = ((BitmapDrawable)this.getDrawable()).getBitmap();
-//            setOriginalBitmap(originalBitmap);
-
-        }
-        else
+        } else
             super.onDraw(canvas);
-           // canvas.drawBitmap(drawableBitmap.getBitmap(),0,0,null);
+
+
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
 
 
-        if(originalBitmap ==null) return false;
+        if(originalBitmap == null) return false;
 
         if(enableZoomDrag  && !enableDraw){
             switch (event.getAction() & MotionEvent.ACTION_MASK) {
@@ -270,16 +276,20 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
             return true;
 
         }else if ( !enableZoomDrag && enableDraw){
+
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    mode = DRAW;
                     touch_start(event.getX(), event.getY());
                     invalidate();
                     break;
                 case MotionEvent.ACTION_MOVE:
+                    mode = DRAW;
                     touch_move(event.getX(), event.getY());
                     invalidate();
                     break;
                 case MotionEvent.ACTION_UP:
+                    mode = DRAW;
                     touch_up();
                     invalidate();
                     break;
@@ -303,40 +313,7 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         return  (float)Math.sqrt(x * x + y * y);
     }
 
-//    private void limitDrag(Matrix m) {
-//        float[] values = new float[9];
-//        m.getValues(values);
-//        float transX = values[Matrix.MTRANS_X];
-//        float transY = values[Matrix.MTRANS_Y];
-//        float scaleX = values[Matrix.MSCALE_X];
-//        float scaleY = values[Matrix.MSCALE_Y];
-//
-//        Rect bounds = this.getDrawable().getBounds();
-//
-//
-//        int width = bounds.right - bounds.left;
-//        int height = bounds.bottom - bounds.top;
-//
-//        float minX = (-width + 20) * scaleX;
-//        float minY = (-height + 20) * scaleY;
-//
-//        if(transX > (getWidth() - 20)) {
-//            transX = getWidth() - 20;
-//        } else if(transX < minX) {
-//            transX = minX;
-//        }
-//
-//        if(transY > (getHeight() - 80)) {
-//            transY = getHeight() - 80;
-//        } else if(transY < minY) {
-//            transY = minY;
-//        }
-//
-//        values[Matrix.MTRANS_X] = transX;
-//        values[Matrix.MTRANS_Y] = transY;
-//        m.setValues(values);
-//
-//    }
+
 
     private void init(){
         // set mode
@@ -411,4 +388,6 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
     }
 
 
+
+   
 }

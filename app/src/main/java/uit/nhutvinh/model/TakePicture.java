@@ -70,20 +70,12 @@ public class TakePicture {
                 scale *= 2;
             }
 
-            // decode with inSampleSize
+
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = scale;
             Bitmap bitmap = BitmapFactory.decodeFileDescriptor(imageSource, null, o2);
+
             imgPic.setOriginalBitmap(bitmap);
-
-        // chinh lai image center view\
-//        Drawable image = imgPic.getDrawable();
-//        RectF rectfView = new RectF(0,0,imgPic.getWidth(),imgPic.getHeight());
-//        RectF rectfImage = new RectF(0,0,image.getIntrinsicWidth(),image.getIntrinsicHeight());
-//        Matrix matrix = new Matrix();
-//        matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);
-//        imgPic.setImageMatrix(matrix);
-
 
 
         } catch (FileNotFoundException e) {
@@ -98,4 +90,7 @@ public class TakePicture {
                 }
         }
     }
+
+
+
 }

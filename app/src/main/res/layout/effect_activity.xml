@@ -18,7 +18,7 @@
             android:contentDescription="@null"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@drawable/ic_cancel"
+
             android:background="@color/colorPrimaryDark"
             android:scaleType="fitCenter"
             android:layout_marginStart="10dp"
@@ -38,7 +38,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:background="@color/colorPrimaryDark"
-            android:src="@drawable/ic_done"
+
             android:layout_marginEnd="10dp"
 
             android:scaleType="fitCenter" />
@@ -55,6 +55,7 @@
             android:layout_height="450dp"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="30dp"
+            android:drawingCacheQuality="high"
 
             android:layout_marginRight="30dp"
             android:layout_marginTop="10dp"
@@ -72,6 +73,7 @@
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
             android:layout_marginTop="10dp"
+
 
             android:adjustViewBounds="true"
             android:background="@drawable/bor"

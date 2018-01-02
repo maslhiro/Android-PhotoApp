@@ -1,23 +1,17 @@
 package uit.nhutvinh.photoapp;
 
 import android.content.Intent;
+
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-
 import uit.nhutvinh.model.EffectView;
 import uit.nhutvinh.model.RotatePicture;
 import uit.nhutvinh.model.TakePicture;
@@ -28,13 +22,16 @@ import uit.nhutvinh.model.TakePicture;
 
 public class EffectActivity extends AppCompatActivity {
     private static final int SELECT_PHOTO = 100;
+
     boolean enabledGrid = true;
+
     private float currRotateDegree = 0;
 
     EffectView imgPic;
     ImageView imgGrid;
 
     BottomNavigationView bottomNavigationView;
+    ImageButton btnSave,btnCancel;
 
     RotatePicture rotatePicture;
     TakePicture takePicture;
@@ -47,26 +44,36 @@ public class EffectActivity extends AppCompatActivity {
 
         addConTrols();
         addEvents();
-
-
     }
 
     private void addEvents() {
-
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 if(item.getItemId()==R.id.addPic)
                 {
+                    btnCancel.setBackgroundResource(R.drawable.ic_cancel);
+                    btnSave.setBackgroundResource(R.drawable.ic_done);
+
+
                     takePicture();
 
                 }else  if(item.getItemId()==R.id.cropPic)
                 {
+                    btnCancel.setBackgroundResource(R.drawable.ic_cancel);
+                    btnSave.setBackgroundResource(R.drawable.ic_done);
+
+
+                    imgPic.setEnableDraw(false);
+                    imgPic.setEnableZoomDrag(true);
+
 
                     return true;
                 }else if(item.getItemId()==R.id.gridPic)
                 {
 
+                    btnCancel.setBackgroundResource(R.drawable.ic_cancel);
+                    btnSave.setBackgroundResource(R.drawable.ic_done);
                     enabledGrid = !enabledGrid;
                     if(enabledGrid){
                         imgGrid.setVisibility(View.VISIBLE);
@@ -80,31 +87,75 @@ public class EffectActivity extends AppCompatActivity {
                     return true;
                 }else if(item.getItemId()==R.id.drawPic)
                 {
+
+
+
+                    btnSave.setBackgroundResource(R.drawable.ic_redo);
+                    btnCancel.setBackgroundResource(R.drawable.ic_undo);
+
+
                     drawPicture();
+                    //rotatePicture.setOriginalBitmap(imgPic.getOriginalBitmap());
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
 
+                    btnCancel.setBackgroundResource(R.drawable.ic_cancel);
+                    btnSave.setBackgroundResource(R.drawable.ic_done);
+
+
                     currRotateDegree += 90;
-                    rotatePicture(currRotateDegree);
+                    if(rotatePicture(currRotateDegree)!=null)
+                    imgPic.setOriginalBitmap(rotatePicture(currRotateDegree));
                     return true;
                 }
+
 
                 return false;
             }
         });
+
+
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imgPic.setOriginalBitmap(null);
+                addConTrols();
+            }
+        });
+
+
+        btnSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                savePicture();
+            }
+        });
+
+
+
+
+    }
+
+    private void savePicture() {
+
 
     }
 
     private void addConTrols() {
         imgPic = (EffectView) findViewById(R.id.imgPic);
         imgGrid = (ImageView) findViewById(R.id.imgGrid);
+        btnCancel = (ImageButton) findViewById(R.id.btnCancel);
+        btnSave = (ImageButton) findViewById(R.id.btnSave);
 
-        rotatePicture = new RotatePicture(imgPic);
+        btnSave.setBackgroundResource(R.drawable.ic_done);
+        btnCancel.setBackgroundResource(R.drawable.ic_cancel);
+
         takePicture = new TakePicture(imgPic);
 
 
-        // kiem tra co gui uri anh tu mainactivity
+             // kiem tra co gui uri anh tu mainactivity
         if (getIntent().getData() != null) {
             imageUri = getIntent().getData();
             takePicture.decodeUri(this, imageUri);
@@ -124,17 +175,6 @@ public class EffectActivity extends AppCompatActivity {
 
                     takePicture.decodeUri(this,imageReturnedIntent.getData());
 
-                    rotatePicture.initCanvas();
-
-                    // Test Draw
-//                    if(imgPic.getDrawable()!=null)
-//                    {
-//                        originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
-//                        originalBitmap = originalBitmapDrawable.getBitmap();
-//                        originalImageHeight = originalBitmap.getHeight();
-//                        originalImageWith = originalBitmap.getWidth();
-//                        originalImageConfig = originalBitmap.getConfig();
-//                    }
                 }
         }
 
@@ -150,18 +190,24 @@ public class EffectActivity extends AppCompatActivity {
         startActivityForResult(photoPickerIntent, SELECT_PHOTO);
     }
 
-    public void rotatePicture(float rotateDegree) {
+    public Bitmap rotatePicture(float rotateDegree) {
 
         imgPic.setEnableDraw(false);
         imgPic.setEnableZoomDrag(true);
-        if(imgPic.getOriginalBitmap()!=null)
-        rotatePicture.rotateImage(rotateDegree);
+        if(imgPic.getDrawable()!=null) {
+            rotatePicture = new RotatePicture(imgPic);
+            return rotatePicture.rotatePicture(rotateDegree);
 
+        }
+
+        return null;
     }
 
     public  void drawPicture(){
-        imgPic.setEnableDraw(true);
-        imgPic.setEnableZoomDrag(false);
+            imgPic.setEnableDraw(true);
+            imgPic.setEnableZoomDrag(false);
+
+
 
     }
 
