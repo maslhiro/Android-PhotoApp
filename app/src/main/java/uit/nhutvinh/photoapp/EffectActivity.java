@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +26,7 @@ import uit.nhutvinh.model.TakePicture;
 
 public class EffectActivity extends AppCompatActivity {
     private static final int SELECT_PHOTO = 100;
+    private static final int CROP_PIC = 50;
 
     boolean enabledGrid = true;
 
@@ -71,6 +73,8 @@ public class EffectActivity extends AppCompatActivity {
 
                     enableSavePicture(true);
 
+                    cropPic();
+
                     imgPic.setEnableDraw(false);
                     imgPic.setEnableZoomDrag(true);
 
@@ -97,7 +101,7 @@ public class EffectActivity extends AppCompatActivity {
 
 
                     drawPicture();
-                    //rotatePicture.setOriginalBitmap(imgPic.getOriginalBitmap());
+
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
@@ -150,9 +154,18 @@ public class EffectActivity extends AppCompatActivity {
             case SELECT_PHOTO:
                 if (resultCode == RESULT_OK && null != imageReturnedIntent) {
 
+                    imageUri = imageReturnedIntent.getData();
                     takePicture.decodeUri(this,imageReturnedIntent.getData());
 
-                }
+
+                }break;
+            case CROP_PIC :
+                if(resultCode == RESULT_OK && imageReturnedIntent!=null ) {
+                    Bundle bundle = imageReturnedIntent.getExtras();
+                    assert bundle != null;
+                    Bitmap bitmap = bundle.getParcelable("data");
+                    imgPic.setOriginalBitmap(bitmap);
+                }break;
         }
 
     }
@@ -198,6 +211,28 @@ public class EffectActivity extends AppCompatActivity {
 
     }
 
+    public  void cropPic()
+    {
+
+        if(imgPic.getDrawable()!=null){
+
+            //Intent cropIntent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            Intent cropIntent = new Intent("com.android.camera.action.CROP");
+
+            cropIntent.setDataAndType(imageUri, "image/*");
+            cropIntent.putExtra("crop", "true");
+            cropIntent.putExtra("aspectX", 1);
+            cropIntent.putExtra("aspectY", 1);
+            cropIntent.putExtra("outputX", 200);
+            cropIntent.putExtra("outputY", 200);
+            cropIntent.putExtra("return-data", true);
+
+            startActivityForResult(cropIntent,CROP_PIC);
+        }
+    }
+
+
+
 
     void enableSavePicture(boolean bool){
         if(bool){
@@ -236,4 +271,7 @@ public class EffectActivity extends AppCompatActivity {
 
 
     }
+
+
+
 }
