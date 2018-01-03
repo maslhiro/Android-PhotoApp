@@ -47,9 +47,9 @@ public class RotatePicture {
     }
 
     public void initCanvas() {
-        if (imgPic.getDrawable() != null) {
-            originalBitmapDrawable = (BitmapDrawable) imgPic.getDrawable();
-            originalBitmap = originalBitmapDrawable.getBitmap();
+        if (imgPic.getOriginalBitmap() != null) {
+            originalBitmapDrawable = imgPic.getDrawableBitmap();
+            originalBitmap =originalBitmapDrawable.getBitmap();
             originalImageHeight = originalBitmap.getHeight();
             originalImageWith = originalBitmap.getWidth();
             originalImageConfig = originalBitmap.getConfig();
@@ -58,19 +58,23 @@ public class RotatePicture {
 
 
     public Bitmap rotatePicture(float rotateDegree) {
+        Bitmap rotateBitmap;
 
-        // Create a bitmap which has same width and height value of original bitmap.
-        Bitmap rotateBitmap = Bitmap.createBitmap(originalImageWith, originalImageHeight, originalImageConfig);
+            // Create a bitmap which has same width and height value of original bitmap.
+        rotateBitmap = Bitmap.createBitmap(originalImageHeight, originalImageWith, originalImageConfig);
+
+
 
         Canvas rotateCanvas = new Canvas(rotateBitmap);
 
         Matrix rotateMatrix = new Matrix();
 
-        // Rotate around the center point of the original image.
-        rotateMatrix.setRotate(rotateDegree, originalBitmap.getWidth() / 2, originalBitmap.getHeight() / 2);
 
+            rotateMatrix.setRotate(rotateDegree, originalBitmap.getHeight() / 2, originalBitmap.getWidth() / 2);
+
+        rotateCanvas.setMatrix(rotateMatrix);
         Paint paint = new Paint();
-        rotateCanvas.drawBitmap(originalBitmap, rotateMatrix, paint);
+        rotateCanvas.drawBitmap(originalBitmap, 0,0, paint);
 
         return rotateBitmap;
     }

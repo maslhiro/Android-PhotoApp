@@ -87,6 +87,15 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         init();
     }
 
+    public BitmapDrawable getDrawableBitmap() {
+        return drawableBitmap;
+    }
+
+    // ko su dung
+    public void setDrawableBitmap(BitmapDrawable drawableBitmap) {
+        this.drawableBitmap = drawableBitmap;
+    }
+
     public boolean isEnableDraw() {
         return enableDraw;
     }
@@ -312,8 +321,6 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
         float y = event.getY(0) - event.getY(1);
         return  (float)Math.sqrt(x * x + y * y);
     }
-
-
 
     private void init(){
         // set mode

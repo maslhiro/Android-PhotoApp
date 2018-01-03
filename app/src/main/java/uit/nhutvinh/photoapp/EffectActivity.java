@@ -7,13 +7,17 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
+
 import uit.nhutvinh.model.EffectView;
 import uit.nhutvinh.model.RotatePicture;
+import uit.nhutvinh.model.SavePicture;
 import uit.nhutvinh.model.TakePicture;
 
 /**
@@ -35,6 +39,8 @@ public class EffectActivity extends AppCompatActivity {
 
     RotatePicture rotatePicture;
     TakePicture takePicture;
+    SavePicture savePicture;
+
     Uri imageUri;
 
 
@@ -104,9 +110,9 @@ public class EffectActivity extends AppCompatActivity {
                     btnSave.setBackgroundResource(R.drawable.ic_done);
 
 
-                    currRotateDegree += 90;
-                    if(rotatePicture(currRotateDegree)!=null)
-                    imgPic.setOriginalBitmap(rotatePicture(currRotateDegree));
+                    currRotateDegree = 90;
+//                    if(rotatePicture(currRotateDegree)!=null)
+//                    imgPic.setOriginalBitmap(rotatePicture(currRotateDegree));
                     return true;
                 }
 
@@ -138,10 +144,7 @@ public class EffectActivity extends AppCompatActivity {
 
     }
 
-    private void savePicture() {
 
-
-    }
 
     private void addConTrols() {
         imgPic = (EffectView) findViewById(R.id.imgPic);
@@ -154,8 +157,7 @@ public class EffectActivity extends AppCompatActivity {
 
         takePicture = new TakePicture(imgPic);
 
-
-             // kiem tra co gui uri anh tu mainactivity
+        // kiem tra co gui uri anh tu mainactivity
         if (getIntent().getData() != null) {
             imageUri = getIntent().getData();
             takePicture.decodeUri(this, imageUri);
@@ -194,6 +196,7 @@ public class EffectActivity extends AppCompatActivity {
 
         imgPic.setEnableDraw(false);
         imgPic.setEnableZoomDrag(true);
+
         if(imgPic.getDrawable()!=null) {
             rotatePicture = new RotatePicture(imgPic);
             return rotatePicture.rotatePicture(rotateDegree);
@@ -206,8 +209,17 @@ public class EffectActivity extends AppCompatActivity {
     public  void drawPicture(){
             imgPic.setEnableDraw(true);
             imgPic.setEnableZoomDrag(false);
+    }
 
+    public void savePicture(){
+        if(imgPic.getDrawable()!=null){
+            savePicture = new SavePicture(imgPic);
+            if(savePicture.savePicture()){
+                Toast.makeText(this,"Lưu Thành Công",Toast.LENGTH_SHORT).show();
+            }
+            else  Toast.makeText(this,"Lưu Thất Bại",Toast.LENGTH_SHORT).show();
 
+        }
 
     }
 

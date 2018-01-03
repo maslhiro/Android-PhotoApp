@@ -19,10 +19,11 @@
     <string name="zoomOut">Zoom Out</string>
     <string name="drawPic">Draw</string>
     <string name="version_app">Version 1.0</string>
-    <string name="info_student_01">Developed by Le Nhut Vinh - 15521016</string>
+    <string name="info_student_01">Developed by Lê Nhựt Vinh - 15521016</string>
     <string name="language">Language</string>
     <string name="viet">Tiếng Việt</string>
     <string name="english">English</string>
     <string name="logo">Đồ án Nhập Môn Ứng Dụng Di Động</string>
+    <string name="info_student_02">Đơàn Minh Tiến - 15520876</string>
 
 </resources>
