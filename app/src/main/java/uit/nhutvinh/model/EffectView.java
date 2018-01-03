@@ -158,8 +158,8 @@ public class EffectView extends android.support.v7.widget.AppCompatImageView {
             drawingBitmap = Bitmap.createBitmap(originalBitmap.getWidth(), originalBitmap.getHeight(), originalBitmap.getConfig());
             mCanvas = new Canvas(drawingBitmap);
 
-            //  chinh lai image center view
-                            Drawable image = getDrawable();
+            //  chinh lai image center vie\
+                Drawable image = getDrawable();
                 RectF rectfView = new RectF(0, 0, this.getWidth(), this.getHeight());
                 RectF rectfImage = new RectF(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
                 matrix.setRectToRect(rectfImage, rectfView, Matrix.ScaleToFit.CENTER);

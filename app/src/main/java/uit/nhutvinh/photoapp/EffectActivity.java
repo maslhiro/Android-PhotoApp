@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,6 +60,7 @@ public class EffectActivity extends AppCompatActivity {
                     btnCancel.setBackgroundResource(R.drawable.ic_cancel);
                     btnSave.setBackgroundResource(R.drawable.ic_done);
 
+                    enableSavePicture(true);
 
                     takePicture();
 
@@ -69,6 +69,7 @@ public class EffectActivity extends AppCompatActivity {
                     btnCancel.setBackgroundResource(R.drawable.ic_cancel);
                     btnSave.setBackgroundResource(R.drawable.ic_done);
 
+                    enableSavePicture(true);
 
                     imgPic.setEnableDraw(false);
                     imgPic.setEnableZoomDrag(true);
@@ -78,8 +79,6 @@ public class EffectActivity extends AppCompatActivity {
                 }else if(item.getItemId()==R.id.gridPic)
                 {
 
-                    btnCancel.setBackgroundResource(R.drawable.ic_cancel);
-                    btnSave.setBackgroundResource(R.drawable.ic_done);
                     enabledGrid = !enabledGrid;
                     if(enabledGrid){
                         imgGrid.setVisibility(View.VISIBLE);
@@ -91,11 +90,8 @@ public class EffectActivity extends AppCompatActivity {
                     }
 
                     return true;
-                }else if(item.getItemId()==R.id.drawPic)
-                {
-
-
-
+                }else if(item.getItemId()==R.id.drawPic) {
+                    enableSavePicture(false);
                     btnSave.setBackgroundResource(R.drawable.ic_redo);
                     btnCancel.setBackgroundResource(R.drawable.ic_undo);
 
@@ -105,14 +101,13 @@ public class EffectActivity extends AppCompatActivity {
                     return true;
                 }else if(item.getItemId()==R.id.rotatePic)
                 {
-
+                    enableSavePicture(true);
                     btnCancel.setBackgroundResource(R.drawable.ic_cancel);
                     btnSave.setBackgroundResource(R.drawable.ic_done);
 
 
                     currRotateDegree = 90;
-//                    if(rotatePicture(currRotateDegree)!=null)
-//                    imgPic.setOriginalBitmap(rotatePicture(currRotateDegree));
+                    imgPic.setOriginalBitmap(rotatePicture(currRotateDegree));
                     return true;
                 }
 
@@ -120,26 +115,6 @@ public class EffectActivity extends AppCompatActivity {
                 return false;
             }
         });
-
-
-
-        btnCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                imgPic.setOriginalBitmap(null);
-                addConTrols();
-            }
-        });
-
-
-        btnSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                savePicture();
-            }
-        });
-
-
 
 
     }
@@ -224,4 +199,41 @@ public class EffectActivity extends AppCompatActivity {
     }
 
 
+    void enableSavePicture(boolean bool){
+        if(bool){
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imgPic.setOriginalBitmap(null);
+                    addConTrols();
+                }
+            });
+
+
+            btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    savePicture();
+                }
+            });
+        }
+        else {
+            btnCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imgPic.onClickUndo();
+                }
+            });
+
+
+            btnSave.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    imgPic.onClickRedo();
+                }
+            });
+        }
+
+
+    }
 }
